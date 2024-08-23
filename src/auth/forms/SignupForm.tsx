@@ -13,8 +13,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { SignupValidation } from '@/lib/validation';
 import { Link } from 'react-router-dom';
+import Loader from '@/components/shared/Loader';
 
 const SignupForm = () => {
+  const isLoading = false;
   const form = useForm<z.infer<typeof SignupValidation>>({
     resolver: zodResolver(SignupValidation),
     defaultValues: {
@@ -100,7 +102,14 @@ const SignupForm = () => {
             )}
           />
           <Button type='submit' className='shad-button_primary'>
-            Создать
+            {isLoading ? (
+              <div className='flex-center gap-2'>
+                <Loader />
+                Загружается...
+              </div>
+            ) : (
+              'Создать'
+            )}
           </Button>
           <p className='text-small-regular text-light-2 text-center mt-2'>
             Уже есть аккаунт?
