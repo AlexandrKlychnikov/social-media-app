@@ -13,10 +13,12 @@ import {
 import { Input } from '@/components/ui/input';
 import { SignupValidation } from '@/lib/validation';
 import { Link } from 'react-router-dom';
+import { useToast } from '@/components/ui/use-toast';
 import Loader from '@/components/shared/Loader';
 import { createUserAccount } from '@/lib/appwrite/api';
 
 const SignupForm = () => {
+  const { toast } = useToast();
   const isLoading = false;
   const form = useForm<z.infer<typeof SignupValidation>>({
     resolver: zodResolver(SignupValidation),
@@ -30,7 +32,11 @@ const SignupForm = () => {
 
   async function onSubmit(values: z.infer<typeof SignupValidation>) {
     const newUser = await createUserAccount(values);
-    console.log(newUser);
+    if (!newUser) {
+      return toast({
+        title: 'Регистрация не удалась. Попробуйте еще раз',
+      });
+    }
   }
   return (
     <Form {...form}>
