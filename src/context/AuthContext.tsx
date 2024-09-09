@@ -59,7 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       return false;
     } catch (error) {
-      console.error(error);
+      console.error('штаа!!', error);
       return false;
     } finally {
       setIsLoading(false);
@@ -68,11 +68,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const cookieFallback = localStorage.getItem('cookieFallback');
-    if (cookieFallback === '[]' || cookieFallback === null) {
+    if (
+      cookieFallback === '[]' ||
+      cookieFallback === null ||
+      cookieFallback === undefined
+    ) {
       navigate('/sign-in');
+    } else {
+      checkAuthUser();
     }
-
-    checkAuthUser();
   }, []);
 
   const value = {
@@ -86,7 +90,5 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
-
-export default AuthProvider;
 
 export const useUserContext = () => useContext(AuthContext);

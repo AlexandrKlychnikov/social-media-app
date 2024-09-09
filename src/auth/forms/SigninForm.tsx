@@ -15,7 +15,7 @@ import { SigninValidation } from '@/lib/validation';
 import { Link, useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
 import Loader from '@/components/shared/Loader';
-import { useSignInAccount } from '@/lib/react-query/queriesAndMutations';
+import { useSignInAccount } from '@/lib/react-query/queries';
 import { useUserContext } from '@/context/AuthContext';
 
 const SigninForm = () => {
@@ -50,9 +50,9 @@ const SigninForm = () => {
       form.reset();
       navigate('/');
     } else {
-      toast({
-        title: 'Регистрация не удалась. Попробуйте еще раз.',
-      });
+      toast({ title: 'Вход не удался. Попробуйте еще раз.' });
+
+      return;
     }
   }
   return (
