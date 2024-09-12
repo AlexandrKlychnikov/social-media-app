@@ -2,10 +2,13 @@ import React from 'react';
 import { Button } from '../ui/button';
 import { useSignOutAccount } from '@/lib/react-query/queries';
 import { INITIAL_USER, useUserContext } from '@/context/AuthContext';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { sidebarLinks } from '@/constants';
+import { INavLink } from '@/types';
 
 const LeftSidebar = () => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const { mutate: signOut } = useSignOutAccount();
   const { user, setUser, setIsAuthenticated, isLoading } = useUserContext();
   const handleSignOut = async (
@@ -45,13 +48,40 @@ const LeftSidebar = () => {
         </Link>
       </div>
 
+      <ul className='flex flex-col gap-6'>
+        {sidebarLinks.map((link: INavLink) => {
+          const isActive = pathname === link.route;
+          return (
+            <li
+              key={link.label}
+              className={`leftsidebar-link group ${
+                isActive && 'bg-primary-500'
+              }`}
+            >
+              <NavLink to={link.route} className='flex gap-4 items-center p-4'>
+                <img
+                  src={link.imgURL}
+                  alt={link.label}
+                  className={`group-hover:invert-white ${
+                    isActive && 'invert-white'
+                  }`}
+                />
+                {link.label}
+              </NavLink>
+            </li>
+          );
+        })}
+      </ul>
+
       <Button
         variant='ghost'
-        className='shad-button_ghost'
+        className='shad-button_ghost group'
         onClick={(e) => handleSignOut(e)}
       >
         <img src='/assets/icons/logout.svg' alt='logout' />
-        <p className='small-medium lg:base-medium'>Выйти</p>
+        <p className='small-medium lg:base-medium group-hover:text-primary-500'>
+          Выйти
+        </p>
       </Button>
     </nav>
   );
