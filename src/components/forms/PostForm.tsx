@@ -15,7 +15,7 @@ import FileUploader from '../shared/FileUploader';
 import { Input } from '../ui/input';
 import { PostValidation } from '@/lib/validation';
 
-const PostForm = () => {
+const PostForm = ({ post }) => {
   const form = useForm<z.infer<typeof PostValidation>>({
     resolver: zodResolver(PostValidation),
     defaultValues: {
@@ -58,7 +58,10 @@ const PostForm = () => {
             <FormItem>
               <FormLabel className='shad-form_label'>Добавить фото</FormLabel>
               <FormControl>
-                <FileUploader />
+                <FileUploader
+                  fieldChange={field.onChange}
+                  mediaUrl={post?.imageUrl}
+                />
               </FormControl>
               <FormMessage className='shad-form_message' />
             </FormItem>
