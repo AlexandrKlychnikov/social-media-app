@@ -14,20 +14,47 @@ import { Textarea } from '../ui/textarea';
 import FileUploader from '../shared/FileUploader';
 import { Input } from '../ui/input';
 import { PostValidation } from '@/lib/validation';
+import { Models } from 'appwrite';
+import { useUserContext } from '@/context/AuthContext';
+import { useCreatePost } from '@/lib/react-query/queries';
+import { useToast } from '../ui/use-toast';
+import { useNavigate } from 'react-router-dom';
 
-const PostForm = ({ post }) => {
+type PostFormProps = {
+  post?: Models.Document;
+  action: 'Create' | 'Update';
+};
+
+const PostForm = ({ post }: PostFormProps) => {
+  const { mutateAsync: createPost, isPending: isLoadingCreate } =
+    useCreatePost();
+
+  const { user } = useUserContext();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof PostValidation>>({
     resolver: zodResolver(PostValidation),
     defaultValues: {
-      caption: '',
+      caption: post ? post?.caption : '',
       file: [],
-      location: '',
-      tags: '',
+      location: post ? post?.location : '',
+      tags: post ? post.tags.join(',') : '',
     },
   });
 
-  function onSubmit(values: z.infer<typeof PostValidation>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof PostValidation>) {
+    const newPost = await createPost({
+      ...values,
+      userId: user.id,
+    });
+    if (!newPost) {
+      toast({
+        title: 'Попробуйте еще разю',
+      });
+    }
+
+    navigate('/');
   }
   return (
     <Form {...form}>
